@@ -9,9 +9,10 @@ public class MasterStructure  implements Serializable{
 	private static final long serialVersionUID = 1L;
 	String ip;
 	int port;
-	public MasterStructure(String ip, int port) {
+	int masterPort;
+	public MasterStructure(String ip, int port, int masterPort) {
 		// TODO Auto-generated constructor stub
-		
+		this.masterPort=masterPort;
 		this.ip = ip;
 		this.port = port;		
 	}
@@ -27,6 +28,10 @@ public class MasterStructure  implements Serializable{
 	public void setPort(int port) {
 		this.port = port;
 	}
+	public int getMasterPort() {
+		return masterPort;
+	}
+
 
 
 }
