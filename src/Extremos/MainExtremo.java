@@ -18,7 +18,7 @@ public class MainExtremo {
 		
 		Thread.sleep(1000);
 //		
-		Cliente c = new Cliente (6000, 8000);
+		Cliente c = new Cliente ("localhost",6000, 8000,"Consulta");
 		Thread cThread = new Thread (c);
 		cThread.start();
 

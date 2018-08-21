@@ -5,9 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketImpl;
 import java.util.ArrayList;
 
 import Masters.ExtremosStructure;
+import Masters.MasterStructure;
 import Masters.Message;
 
 
@@ -15,12 +17,14 @@ public class Server implements Runnable{
 	int port;
 	ArrayList<ExtremosStructure> neighs;
 	SharedObject so;
-	int masterPort; 
+	int masterPort;
+	String masterIp;
 	public Server(int portReciv, int portSend ) {
 		this.port = portReciv;
-		
+		this.masterIp="localhost";
 		this.so = new SharedObject();
 		this.masterPort = portSend;
+		
 	}
 	
 	@Override
@@ -39,9 +43,9 @@ public class Server implements Runnable{
 			
 			while (true){
 				Socket earing = server.accept();
-//				ThreadServer ts = new ThreadServer (this.neighs, earing, this.port, this.so);
-//				Thread tsThread = new Thread (ts);
-//				tsThread.start();
+				ThreadServer ts = new ThreadServer (this.masterIp,this.masterPort,earing);
+				Thread tsThread = new Thread (ts);
+				tsThread.start();
 			}
 			
 		} catch (IOException e) {

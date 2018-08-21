@@ -10,11 +10,11 @@ import Extremos.Server;
 
 
 
-public class ThreadCordinador implements Runnable{
+public class TrheadCoordinador implements Runnable{
 	ArrayList<ExtremosStructure> extremos;
 	Socket server;
 
-	public ThreadCordinador(ArrayList<ExtremosStructure> extremos, Socket server) {
+	public TrheadCoordinador(ArrayList<ExtremosStructure> extremos, Socket server) {
 		this.extremos = extremos;
 		this.server =server;
 		

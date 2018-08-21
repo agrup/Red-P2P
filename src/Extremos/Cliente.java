@@ -11,23 +11,32 @@ import Masters.Message;
 
 public class Cliente implements Runnable{
 
-	public Cliente(int i, int j) {
-		// TODO Auto-generated constructor stub
+	String consulta;
+	int portSend;
+	int portListen;
+	 String ip;
+
+	public Cliente(String ip,int portListen, int portSend, String Consulta) {
+		this.ip = ip;
+		this.portListen = portListen;
+		this.portSend= portSend;
+		this.consulta= Consulta;
+		
 	}
 
 	@Override
 	public void run() {
 		
 		try {
-			Socket s = new Socket ("localhost", 8000);
+			Socket s = new Socket ("localhost", this.portSend);
 			ObjectOutputStream serverOutput = new ObjectOutputStream (s.getOutputStream());
 			serverOutput.flush();
-			ObjectInputStream serverInput = new ObjectInputStream (s.getInputStream());
-			
-			Message msg =  new Message ("QUERY", 1234);
+			//ObjectInputStream serverInput = new ObjectInputStream (s.getInputStream());
+			System.err.println("serverQuery");
+			Message msg =  new Message ("QUERY", "Primera Consulta");
 			serverOutput.writeObject(msg);
 			
-		} catch (IOException e) {
+	} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
