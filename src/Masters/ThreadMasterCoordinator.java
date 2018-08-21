@@ -28,6 +28,9 @@ public class ThreadMasterCoordinator implements Runnable{
 	}
 	
 	
+
+
+
 	@Override
 	public void run() {
 		try {
@@ -68,6 +71,7 @@ public class ThreadMasterCoordinator implements Runnable{
 			
 						}
 					}
+					
 				}else {
 					if((msg.header).equals("ADDMASTER")) {
 						this.masterNeighs.add( (MasterStructure) msg.getBody() );

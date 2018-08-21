@@ -59,20 +59,14 @@ public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int p
 				Socket server = master.accept();
 				System.out.println("NEW SERVER RECEIVED");
 
-				ThreadMasterCoordinator tmc = new ThreadMasterCoordinator(this.masters,server,masterst);
+				ThreadServerCoordinator tmc = new ThreadServerCoordinator(this.extremos,server,masterst);
 				Thread tm = new Thread (tmc);
 				tm.start();
 				
-//				ThreadCordinador tc = new ThreadCordinador (this.extremos, server);
-//				Thread tcThread = new Thread (tc);
-//				tcThread.start();
-//				
-//				Socket admin = mastermaster.accept();
-//				System.out.println("NEW Master send messege");
 				
-//				ThreadMasterCoordinator tmc = new ThreadMasterCoordinator(this.masters,admin);
-//				Thread tm = new Thread (tmc);
-//				tm.start();
+				
+				
+
 			}
 			
 			

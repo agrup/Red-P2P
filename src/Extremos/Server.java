@@ -15,12 +15,12 @@ public class Server implements Runnable{
 	int port;
 	ArrayList<ExtremosStructure> neighs;
 	SharedObject so;
-	int coordPort; 
+	int masterPort; 
 	public Server(int portReciv, int portSend ) {
 		this.port = portReciv;
-		this.neighs = new ArrayList<ExtremosStructure>();
+		
 		this.so = new SharedObject();
-		this.coordPort = portSend;
+		this.masterPort = portSend;
 	}
 	
 	@Override
@@ -28,7 +28,7 @@ public class Server implements Runnable{
 		try {
 			ServerSocket server = new ServerSocket (this.port);
 			
-			Socket serverToMaster = new Socket("localhost", this.coordPort);
+			Socket serverToMaster = new Socket("localhost", this.masterPort);
 			
 			ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 			serverOutput.flush();
