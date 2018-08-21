@@ -12,16 +12,18 @@ import Extremos.SharedObject;
 public class ThreadMasterCoordinator implements Runnable{
 	
 	ArrayList<MasterStructure> masterNeighs;
-	Socket admin;
+	Socket server;
 	int masterPort;
 	SharedObject so;
 	int port;
+	MasterStructure masterStructure;
 
-	public ThreadMasterCoordinator(ArrayList<MasterStructure> masterNeighs, int port, int masterPorts, Socket admin ) {
+	public ThreadMasterCoordinator(ArrayList<MasterStructure> masterNeighs, Socket server, MasterStructure master ) {
 		this.masterNeighs = masterNeighs;
-		this.admin = admin;
-		this.masterPort = masterPorts;
-		this.port=port;
+		this.server = server;
+		this.masterStructure= master;
+//		this.masterPort = masterPorts;
+//		this.port=port;
 		//this.so = so;
 	}
 	
@@ -32,47 +34,68 @@ public class ThreadMasterCoordinator implements Runnable{
 			
 		ObjectOutputStream serverOutput;
 		
-		serverOutput = new ObjectOutputStream (this.admin.getOutputStream());
+		serverOutput = new ObjectOutputStream (this.server.getOutputStream());
 		
 		serverOutput.flush();
 		
-		ObjectInputStream MasterrInput = new ObjectInputStream (this.admin.getInputStream());
+		ObjectInputStream MasterrInput = new ObjectInputStream (this.server.getInputStream());
 		
 		Message msg =  (Message) MasterrInput.readObject();
 		
 		
 		
-		System.out.println("SERVER: "+this.masterPort+ " MSG RECv : "+msg.getHeader().toString());
+		System.out.println("Master: "+this.masterStructure.getMasterPort()+ " MSG RECv : "+msg.getHeader().toString()+" from"+( (MasterStructure) msg.getBody()).getMasterPort());
 		
 		
 		// check if list of master is empty
 		// and send msg to all
 		synchronized (this.masterNeighs) {
-			if(!this.masterNeighs.isEmpty()) {
-				
-				for(MasterStructure master: this.masterNeighs) {
-					if(master.getPort() != this.masterPort) {
-						Socket masterToMaster = new Socket(master.getIp(),master.getMasterPort());
+
+				if((msg.header).equals("ADD")) {
+					for(MasterStructure master: this.masterNeighs) {
+						if(master.getPort() != this.masterPort) {
+							Socket masterToMaster = new Socket(master.getIp(),master.getMasterPort());
+							
+							ObjectOutputStream masterOutput = new ObjectOutputStream (masterToMaster.getOutputStream());
+							masterOutput.flush();
+							
+							ObjectInputStream masterInput = new ObjectInputStream (masterToMaster.getInputStream());
+							System.out.println("[master("+this.masterPort+")  ->master("+master.getMasterPort()+")  ] - IN/OUT Object start");
+							
+							
+							Message msgToMaster = new Message("ADD", ((ExtremosStructure) msg.getBody()) );
+							masterOutput.writeObject(msgToMaster);
+			
+						}
+					}
+				}else {
+					if((msg.header).equals("ADDMASTER")) {
+						this.masterNeighs.add( (MasterStructure) msg.getBody() );
+						//System.out.println("Master Adding - "+((MasterStructure) msg.getBody()).getPort()+"at"+this.masterStructure.getMasterPort());
+						System.out.println("Master Adding - "+((MasterStructure) msg.getBody()).getMasterPort()+" IN "+this.masterStructure.getMasterPort());
+						
+						Message msgToMaster = new Message("ACKMASTER", this.masterStructure  );
+						
+						Socket masterToMaster = new Socket( ((MasterStructure) msg.getBody()).getIp() , ((MasterStructure) msg.getBody()).getMasterPort());
 						
 						ObjectOutputStream masterOutput = new ObjectOutputStream (masterToMaster.getOutputStream());
 						masterOutput.flush();
 						
-						ObjectInputStream masterInput = new ObjectInputStream (masterToMaster.getInputStream());
-						System.out.println("[master("+this.masterPort+")  ->master("+master.getMasterPort()+")  ] - IN/OUT Object start");
-						
-						
-						Message msgToMaster = new Message("ADDMASTER", new MasterStructure("localhos",this.port,this.masterPort)   );
 						masterOutput.writeObject(msgToMaster);
-		
+						
+
+						
+					}else {
+						if((msg.header).equals("ACKMASTER")) {
+							this.masterNeighs.add( (MasterStructure) msg.getBody() );
+							System.out.println("Master Adding - "+((MasterStructure) msg.getBody()).getMasterPort()+"at"+this.masterStructure.getMasterPort());
+							
+						}
 					}
 				}
 				
-			}else
-			{
-				System.out.println(" Primer Master Online ");
 			}
 		
-		}
 		
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
