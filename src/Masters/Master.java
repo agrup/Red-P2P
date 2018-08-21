@@ -39,7 +39,7 @@ public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int p
 			
 			
 			//aviso a todos los masters que estoy online
-			ThreadMaster Tmaster = new ThreadMaster(this.mastersKnow,masterst,mastermaster);
+			ThreadMaster Tmaster = new ThreadMaster(this.mastersKnow,this.masters,masterst,mastermaster);
 			Thread TmasterThread = new Thread(Tmaster);
 			TmasterThread.start();
 			
@@ -57,9 +57,9 @@ public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int p
 			while (true){
 				
 				Socket server = master.accept();
-				System.out.println("NEW SERVER RECEIVED");
+				System.out.println("NEW SERVER RECEIVED now");
 
-				ThreadServerCoordinator tmc = new ThreadServerCoordinator(this.extremos,server,masterst);
+				ThreadServerCoordinator tmc = new ThreadServerCoordinator(this.extremos,server,this.masters);
 				Thread tm = new Thread (tmc);
 				tm.start();
 				

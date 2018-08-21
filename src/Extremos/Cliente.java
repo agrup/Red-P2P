@@ -24,7 +24,7 @@ public class Cliente implements Runnable{
 			serverOutput.flush();
 			ObjectInputStream serverInput = new ObjectInputStream (s.getInputStream());
 			
-			Message msg =  new Message ("SETCLIDATA", 1234);
+			Message msg =  new Message ("QUERY", 1234);
 			serverOutput.writeObject(msg);
 			
 		} catch (IOException e) {

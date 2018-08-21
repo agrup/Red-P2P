@@ -11,13 +11,13 @@ public class MainExtremo {
 		sThread.start();
 		
 		Thread.sleep(1000);
-		
-		Server s1 = new Server (8001, 9000);
+//		
+		Server s1 = new Server (8001, 9001);
 		Thread s1Thread = new Thread (s1);
 		s1Thread.start();
 		
 		Thread.sleep(1000);
-		
+//		
 		Cliente c = new Cliente (6000, 8000);
 		Thread cThread = new Thread (c);
 		cThread.start();

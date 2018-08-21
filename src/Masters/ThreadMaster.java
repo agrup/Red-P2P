@@ -19,12 +19,12 @@ public class ThreadMaster implements Runnable{
 	ArrayList<MasterStructure> MastersOnline;
 
 
-	public ThreadMaster(ArrayList<MasterStructure> listaMasters, MasterStructure masterStructure, ServerSocket mastermaster) 
+	public ThreadMaster(ArrayList<MasterStructure> listaMasters ,ArrayList<MasterStructure> masters, MasterStructure masterStructure, ServerSocket mastermaster) 
 	{
 		this.listaMasters = listaMasters; 
 		this.master = masterStructure;
 		this.mastermaster = mastermaster;
-		this.MastersOnline = new ArrayList<MasterStructure>();
+		this.MastersOnline = masters;
 	}
 	
 	

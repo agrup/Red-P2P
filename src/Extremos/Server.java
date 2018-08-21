@@ -34,14 +34,14 @@ public class Server implements Runnable{
 			serverOutput.flush();
 			
 			ObjectInputStream serverInput = new ObjectInputStream (serverToMaster.getInputStream());
-			System.out.println("[SERV->Master] Socket / IN / OUT OK in port: "+this.port);
+			System.out.println("[SERV->Master] Socket / IN / OUT OK in port: "+this.masterPort);
 			serverOutput.writeObject(new Message ("ADD", new ExtremosStructure("localhost",this.port)));
 			
 			while (true){
 				Socket earing = server.accept();
-				ThreadServer ts = new ThreadServer (this.neighs, earing, this.port, this.so);
-				Thread tsThread = new Thread (ts);
-				tsThread.start();
+//				ThreadServer ts = new ThreadServer (this.neighs, earing, this.port, this.so);
+//				Thread tsThread = new Thread (ts);
+//				tsThread.start();
 			}
 			
 		} catch (IOException e) {
