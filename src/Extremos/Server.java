@@ -43,7 +43,7 @@ public class Server implements Runnable{
 			
 			while (true){
 				Socket earing = server.accept();
-				ThreadServer ts = new ThreadServer (this.masterIp,this.masterPort,earing);
+				ThreadServer ts = new ThreadServer (this.port,this.masterIp,this.masterPort,earing,this.so);
 				Thread tsThread = new Thread (ts);
 				tsThread.start();
 			}

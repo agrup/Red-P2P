@@ -14,12 +14,16 @@ public class ThreadServer implements Runnable{
 	Socket earing;
 	int serverPort;
 	String masterIp;
+	int recvport;
+	SharedObject so;
 
 
-	public ThreadServer(String masterIp, int sendport, Socket earing) {
+	public ThreadServer(int port, String masterIp, int sendport, Socket earing, SharedObject so) {
+		this.recvport= port;
 		this.earing = earing;
 		this.serverPort=sendport;
 		this.masterIp=masterIp;
+		this.so = so;
 	}
 	
 	
@@ -34,15 +38,28 @@ public class ThreadServer implements Runnable{
 			
 			
 			
+			if(msg.getHeader().equals("QUERY")) {
+					
+				
+				
+				Socket serverToMaster = new Socket(this.masterIp,this.serverPort);
+				ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
+				serverOutput.flush();
+				
+				Query query = new Query(this.recvport,(String) msg.getBody());
+				
+				serverOutput.writeObject(new Message ("QUERY",query));
+				
+				System.err.println("QUERY");
+				
+			}else {
+				
+//				for(SharedObject so:this.so.getFiles) {
+//					
+//				}
+				
+			}
 			
-			
-			Socket serverToMaster = new Socket(this.masterIp,this.serverPort);
-			ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
-			serverOutput.flush();
-			
-			serverOutput.writeObject(new Message ("QUERY", msg.getBody()));
-			
-			System.err.println("QUERY");
 			
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block

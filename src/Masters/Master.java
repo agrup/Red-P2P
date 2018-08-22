@@ -58,7 +58,7 @@ public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int p
 				
 				Socket server = master.accept();
 				System.out.println("NEW SERVER RECEIVED now");
-
+				
 				ThreadServerCoordinator tmc = new ThreadServerCoordinator(this.extremos,server,this.masters);
 				Thread tm = new Thread (tmc);
 				tm.start();

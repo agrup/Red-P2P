@@ -6,12 +6,11 @@ public class ExtremosStructure implements Serializable{
 
 	String ip;
 	int port;
+	int recvPort;
 	public ExtremosStructure(String ip, int port) {
-		// TODO Auto-generated constructor stub
-		// TODO Auto-generated constructor stub
-		
 		this.ip = ip;
 		this.port = port;
+		//this.recvPort= recvPort;
 	}
 	public String getIp() {
 		return ip;

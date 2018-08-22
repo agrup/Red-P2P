@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import Extremos.Query;
+
 public class ThreadServerCoordinator implements Runnable  {
 
 	ArrayList<ExtremosStructure> extremos;
@@ -59,9 +61,20 @@ public class ThreadServerCoordinator implements Runnable  {
 				
 				if((msg.header).equals("QUERY")) {
 					synchronized (this.extremos){
+						ArrayList<ExtremosStructure> response = new  ArrayList<ExtremosStructure>();
 						for(ExtremosStructure es: this.extremos) {
-							System.out.println("Consulta a "+es.getPort());
+							if((es.port)!=((Query) msg.getBody()).getPort()) {
+								
 							
+								System.out.println("Consulta a "+es.getPort());
+								System.out.println("Consulta de "+ ((Query) msg.getBody()).getPort());
+								Socket Toserver = new Socket(es.getIp(),es.port);
+								
+								ObjectOutputStream MasterToServer = new ObjectOutputStream (Toserver.getOutputStream());
+								serverOutput.flush();
+								
+								MasterToServer.writeObject(new Message ("MASTERQUERY", msg.getBody()));
+							}
 						}
 					}
 				}
