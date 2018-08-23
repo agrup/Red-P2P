@@ -19,16 +19,17 @@ public class ThreadServer implements Runnable{
 	int recvport;
 	SharedObject so;
 	ExtremosStructure es;
+	ArrayList<Query> consultas;
 
 
-	public ThreadServer(ExtremosStructure es,String masterIp, int sendport, Socket earing, SharedObject so) {
+	public ThreadServer(ExtremosStructure es,String masterIp, int sendport, Socket earing, SharedObject so, ArrayList<Query> consultas) {
 		this.recvport= es.getPort();
 		this.earing = earing;
 		this.serverPort=sendport;
 		this.masterIp=masterIp;
 		this.so = so;
 		this.es=es;
-		
+		this.consultas = consultas;
 	}
 	
 	
@@ -54,7 +55,7 @@ public class ThreadServer implements Runnable{
 				ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 				serverOutput.flush();
 				ExtremosStructure st = new ExtremosStructure(this.masterIp,this.recvport);
-				Query query = new Query(st,(String) msg.getBody());
+				Query query = new Query(this.consultas.size(),st,(String) msg.getBody());
 				
 				serverOutput.writeObject(new Message ("QUERY",query));
 				
@@ -82,7 +83,12 @@ public class ThreadServer implements Runnable{
 					}
 				//}
 					if(msg.getHeader().equals("RESPONSE")) {
-						
+						for(Query id: this.consultas) {
+							if (id.id == ((Response) msg.getBody() ).id ) {
+								
+							}
+								
+						}
 						
 						
 						System.err.println("Respuesta Nodo con consulta id:"+ ((Response) msg.getBody() ).id+ " consulta:"+((Response) msg.getBody() ).consulta);

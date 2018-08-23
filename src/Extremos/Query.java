@@ -6,14 +6,16 @@ import Masters.ExtremosStructure;
 
  
 public class Query implements Serializable{
-	
+	public int id;
 	int Extremo;
 	String Consulta;
 	ExtremosStructure ext;
 	
-	public Query(ExtremosStructure es,String consulta){
+	public Query(int id,ExtremosStructure es,String consulta){
 		this.ext = es;
 		this.Consulta = consulta;
+		this.id= id;
+		
 	}
 	
 	public ExtremosStructure getExtremoSt() {

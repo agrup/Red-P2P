@@ -20,7 +20,7 @@ public class Server implements Runnable{
 	int masterPort;
 	String masterIp;
 	String ip;
-	ArrayList<String> consultas;
+	ArrayList<Query> consultas;
 	
 	
 	
@@ -30,7 +30,7 @@ public class Server implements Runnable{
 		this.so = new SharedObject(path);
 		this.masterPort = portSend;
 		this.ip = ip;
-		this.consultas = new ArrayList<String>();
+		this.consultas = new ArrayList<Query>();
 	}
 	
 	public void setSO (String path) {
@@ -61,7 +61,7 @@ public class Server implements Runnable{
 				Socket earing = server.accept();
 				ExtremosStructure es = new ExtremosStructure(this.ip,this.port);
 				MasterStructure ms = new MasterStructure(this.masterIp,this.masterPort);
-				ThreadServer ts = new ThreadServer (es,this.masterIp,this.masterPort,earing,this.so);
+				ThreadServer ts = new ThreadServer (es,this.masterIp,this.masterPort,earing,this.so,this.consultas);
 				Thread tsThread = new Thread (ts);
 				tsThread.start();
 			}
