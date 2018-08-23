@@ -6,19 +6,20 @@ public class MainExtremo {
 
 	public static void main(String[] args) throws InterruptedException {
 		// TODO Auto-generated method stub
-		Server s = new Server (8000, 9000);
+		Server s = new Server ("localhost",8000, 9000,"/home/agu/Unlu/SDyPP/RedP2p/Compartido/Server1");
 		Thread sThread = new Thread (s);
 		sThread.start();
 		
 		Thread.sleep(1000);
 //		
-		Server s1 = new Server (8001, 9001);
+		Server s1 = new Server ("localhost",8001, 9001,"/home/agu/Unlu/SDyPP/RedP2p/Compartido/Server2");
+		
 		Thread s1Thread = new Thread (s1);
 		s1Thread.start();
 		
 		Thread.sleep(1000);
 //		
-		Cliente c = new Cliente ("localhost",6000, 8000,"Consulta");
+		Cliente c = new Cliente ("localhost",6000, 8000,"archivo 3 nosdo2");
 		Thread cThread = new Thread (c);
 		cThread.start();
 

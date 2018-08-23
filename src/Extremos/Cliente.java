@@ -33,7 +33,7 @@ public class Cliente implements Runnable{
 			serverOutput.flush();
 			//ObjectInputStream serverInput = new ObjectInputStream (s.getInputStream());
 			System.err.println("serverQuery");
-			Message msg =  new Message ("QUERY", "Primera Consulta");
+			Message msg =  new Message ("QUERY", this.consulta);
 			serverOutput.writeObject(msg);
 			
 	} catch (IOException e) {

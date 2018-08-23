@@ -16,6 +16,12 @@ public class MasterStructure  implements Serializable{
 		this.ip = ip;
 		this.port = port;		
 	}
+	public MasterStructure(String ip, int portthis) {
+		// TODO Auto-generated constructor stub
+		this.masterPort=masterPort;
+		this.ip = ip;
+		this.port = port;		
+	}
 	public String getIp() {
 		return ip;
 	}

@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import Masters.ExtremosStructure;
+import Masters.MasterStructure;
 import Masters.Message;
 
 public class ThreadServer implements Runnable{
@@ -16,17 +18,23 @@ public class ThreadServer implements Runnable{
 	String masterIp;
 	int recvport;
 	SharedObject so;
+	ExtremosStructure es;
 
 
-	public ThreadServer(int port, String masterIp, int sendport, Socket earing, SharedObject so) {
-		this.recvport= port;
+	public ThreadServer(ExtremosStructure es,String masterIp, int sendport, Socket earing, SharedObject so) {
+		this.recvport= es.getPort();
 		this.earing = earing;
 		this.serverPort=sendport;
 		this.masterIp=masterIp;
 		this.so = so;
+		this.es=es;
+		
 	}
 	
 	
+
+
+
 	@Override
 	public void run() {
 		
@@ -45,18 +53,42 @@ public class ThreadServer implements Runnable{
 				Socket serverToMaster = new Socket(this.masterIp,this.serverPort);
 				ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 				serverOutput.flush();
-				
-				Query query = new Query(this.recvport,(String) msg.getBody());
+				ExtremosStructure st = new ExtremosStructure(this.masterIp,this.recvport);
+				Query query = new Query(st,(String) msg.getBody());
 				
 				serverOutput.writeObject(new Message ("QUERY",query));
 				
-				System.err.println("QUERY");
+				
 				
 			}else {
 				
+				if(msg.getHeader().equals("MASTERQUERY")) {
+					boolean flag = false;
+					String consulta = ((Query) msg.getBody()).Consulta;
+					for(Path fileObject: this.so.files) {
+						if(fileObject.toString().equals(consulta)) {
+							System.out.println("Consulta de"+ fileObject.toString());
+							
+							//Socket serverToMaster = new Socket(((Query) msg.getBody()).getIp(),this.serverPort);
+							Socket serverToMaster = new Socket (this.masterIp,this.serverPort);
+							ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
+							serverOutput.flush();
+							
+							serverOutput.writeObject(new Message("RESPONSE",new Response(1,consulta,this.es)));
+							
+						}else {System.out.println("Consulta de 2:"+consulta+"  "+fileObject.toString());}
+					}
+				}else {
+					}
+				//}
+					if(msg.getHeader().equals("RESPONSE")) {
+						
+						
+						
+						System.err.println("Respuesta Nodo con consulta id:"+ ((Response) msg.getBody() ).id+ " consulta:"+((Response) msg.getBody() ).consulta);
 //				for(SharedObject so:this.so.getFiles) {
 //					
-//				}
+				}
 				
 			}
 			

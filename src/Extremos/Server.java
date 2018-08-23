@@ -19,17 +19,33 @@ public class Server implements Runnable{
 	SharedObject so;
 	int masterPort;
 	String masterIp;
-	public Server(int portReciv, int portSend ) {
+	String ip;
+	ArrayList<String> consultas;
+	
+	
+	
+	public Server(String ip,int portReciv, int portSend, String path ) {
 		this.port = portReciv;
 		this.masterIp="localhost";
-		this.so = new SharedObject();
+		this.so = new SharedObject(path);
 		this.masterPort = portSend;
-		
+		this.ip = ip;
+		this.consultas = new ArrayList<String>();
+	}
+	
+	public void setSO (String path) {
+		 this.so.setpath(path);;
 	}
 	
 	@Override
 	public void run() {
 		try {
+			
+			
+			//Shared Object read a folder and contain a arrayList of string with name off file 
+			
+			
+			
 			ServerSocket server = new ServerSocket (this.port);
 			
 			Socket serverToMaster = new Socket("localhost", this.masterPort);
@@ -43,7 +59,9 @@ public class Server implements Runnable{
 			
 			while (true){
 				Socket earing = server.accept();
-				ThreadServer ts = new ThreadServer (this.port,this.masterIp,this.masterPort,earing,this.so);
+				ExtremosStructure es = new ExtremosStructure(this.ip,this.port);
+				MasterStructure ms = new MasterStructure(this.masterIp,this.masterPort);
+				ThreadServer ts = new ThreadServer (es,this.masterIp,this.masterPort,earing,this.so);
 				Thread tsThread = new Thread (ts);
 				tsThread.start();
 			}
