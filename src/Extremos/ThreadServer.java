@@ -19,10 +19,12 @@ public class ThreadServer implements Runnable{
 	int recvport;
 	SharedObject so;
 	ExtremosStructure es;
-	ArrayList<Query> consultas;
+	public ArrayList<Query> consultas;
+	int minResponse;
 
 
-	public ThreadServer(ExtremosStructure es,String masterIp, int sendport, Socket earing, SharedObject so, ArrayList<Query> consultas) {
+
+	public ThreadServer(ExtremosStructure es,String masterIp, int sendport, Socket earing, SharedObject so, ArrayList<Query> consultas,int minResponse) {
 		this.recvport= es.getPort();
 		this.earing = earing;
 		this.serverPort=sendport;
@@ -30,6 +32,7 @@ public class ThreadServer implements Runnable{
 		this.so = so;
 		this.es=es;
 		this.consultas = consultas;
+		this.minResponse= minResponse;
 	}
 	
 	
@@ -55,11 +58,13 @@ public class ThreadServer implements Runnable{
 				ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 				serverOutput.flush();
 				ExtremosStructure st = new ExtremosStructure(this.masterIp,this.recvport);
-				Query query = new Query(this.consultas.size(),st,(String) msg.getBody());
-				
+				Query query = new Query(this.consultas.size()+1,st,(String) msg.getBody(),this.minResponse);
+				synchronized (this.consultas) {
+				this.consultas.add(query);}
 				serverOutput.writeObject(new Message ("QUERY",query));
 				
-				
+
+				System.err.println(this.consultas+"agregada consulta"+this.consultas.size());
 				
 			}else {
 				
@@ -75,27 +80,31 @@ public class ThreadServer implements Runnable{
 							ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 							serverOutput.flush();
 							
-							serverOutput.writeObject(new Message("RESPONSE",new Response(1,consulta,this.es)));
+							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,this.es)));
 							
-						}else {System.out.println("Consulta de 2:"+consulta+"  "+fileObject.toString());}
+						}//else {System.out.println("Consulta de 2:"+consulta+"  "+fileObject.toString());}
 					}
 				}else {
-					}
+					//}
 				//}
 					if(msg.getHeader().equals("RESPONSE")) {
+						synchronized (this.consultas) {
+							System.err.println("Respuesta"+this.consultas);
 						for(Query id: this.consultas) {
+							System.err.println("ids:"+((Query)id).id);
 							if (id.id == ((Response) msg.getBody() ).id ) {
-								
+								System.err.println("Respuesta");
 							}
 								
 						}
 						
-						
-						System.err.println("Respuesta Nodo con consulta id:"+ ((Response) msg.getBody() ).id+ " consulta:"+((Response) msg.getBody() ).consulta);
+						}
+						System.err.println("Consulatas"+this.consultas);
+						System.err.println("Respuesta Nodo con consulta id:::"+ ((Response) msg.getBody() ).id+ " consulta:"+((Response) msg.getBody() ).consulta);
 //				for(SharedObject so:this.so.getFiles) {
 //					
 				}
-				
+				}
 			}
 			
 			

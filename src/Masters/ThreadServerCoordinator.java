@@ -14,12 +14,15 @@ public class ThreadServerCoordinator implements Runnable  {
 	ArrayList<ExtremosStructure> extremos;
 	Socket server;
 	ArrayList<MasterStructure> masters;
+	private int count;
+	int maxCount;
 
 	public ThreadServerCoordinator(ArrayList<ExtremosStructure> extremos, Socket server, ArrayList<MasterStructure> masters) {
 		this.server = server;
 		this.extremos = extremos;
 		this.masters = masters;
-		
+		this.count = 0;
+		this.maxCount=1;
 	}
 
 	@Override
@@ -49,6 +52,7 @@ public class ThreadServerCoordinator implements Runnable  {
 					}
 					synchronized (this.extremos){
 						this.extremos.add((ExtremosStructure) msg.getBody());
+						
 					}
 				}else {
 					if((msg.header).equals("ADDREMOTE")) {
@@ -61,7 +65,9 @@ public class ThreadServerCoordinator implements Runnable  {
 				}
 				
 				if((msg.header).equals("QUERY")) {
+
 					synchronized (this.extremos){
+						this.maxCount=((Query) msg.getBody()).getMinResponse();
 						ArrayList<ExtremosStructure> response = new  ArrayList<ExtremosStructure>();
 						for(ExtremosStructure es: this.extremos) {
 							if((es.port)!=((Query) msg.getBody()).getPort()) {
@@ -77,7 +83,11 @@ public class ThreadServerCoordinator implements Runnable  {
 								
 								MasterToServer.writeObject(new Message ("MASTERQUERY", msg.getBody()));
 							}
+						};
+						while(this.count<this.maxCount) {
+							wait();
 						}
+						
 					}
 				}else {
 					if(msg.header.equals("RESPONSE")) {
@@ -96,7 +106,7 @@ public class ThreadServerCoordinator implements Runnable  {
 				}
 				
 
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException | ClassNotFoundException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

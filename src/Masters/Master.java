@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import Extremos.Query;
+
 public class Master implements Runnable{
 	int port;
 	int portMasters;
@@ -12,6 +14,7 @@ public class Master implements Runnable{
 	ArrayList<ExtremosStructure> extremos;
 	ArrayList<MasterStructure> mastersKnow;
 	String ip;
+	ArrayList<Query> querys;
 	
 public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int portMasters) {
 	 this.port = port;
@@ -20,6 +23,7 @@ public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int p
 	 this.mastersKnow  = listaMasters;
 	 this.masters = new ArrayList<MasterStructure>();
 	 this.ip = ip;
+	 this.querys = new ArrayList<Query>();
 	// this.masterStructure = new MasterStructure(this.ip,this.port,this.portMasters);
 	 
 }

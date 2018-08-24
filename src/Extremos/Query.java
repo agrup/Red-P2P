@@ -10,12 +10,13 @@ public class Query implements Serializable{
 	int Extremo;
 	String Consulta;
 	ExtremosStructure ext;
+	int minResponse;
 	
-	public Query(int id,ExtremosStructure es,String consulta){
+	public Query(int id,ExtremosStructure es,String consulta, int min){
 		this.ext = es;
 		this.Consulta = consulta;
 		this.id= id;
-		
+		this.minResponse = min;
 	}
 	
 	public ExtremosStructure getExtremoSt() {
@@ -29,5 +30,10 @@ public class Query implements Serializable{
 	}
 	public String getIp() {
 		return this.ext.getIp();
+	}
+
+	public int getMinResponse() {
+		
+		return this.minResponse;
 	}
 }
