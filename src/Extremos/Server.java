@@ -32,6 +32,7 @@ public class Server implements Runnable{
 		this.masterPort = portSend;
 		this.ip = ip;
 		this.consultas = new ArrayList<Query>();
+		this.minResponse=2;
 		
 	}
 	

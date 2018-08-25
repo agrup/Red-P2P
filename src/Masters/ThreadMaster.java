@@ -63,8 +63,6 @@ public class ThreadMaster implements Runnable{
 			while (true) {
 			
 				Socket admin = mastermaster.accept();
-	
-				System.out.println("NEW Master send messege");
 				ThreadMasterCoordinator tmc = new ThreadMasterCoordinator(this.MastersOnline,admin, this.master);
 				Thread tm = new Thread (tmc);
 				tm.start();

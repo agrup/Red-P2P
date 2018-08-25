@@ -63,8 +63,7 @@ public class ThreadServer implements Runnable{
 				this.listaconsultas.add(query);}
 				serverOutput.writeObject(new Message ("QUERY",query));
 				
-				System.err.println("mgs en t server:"+ msg.getHeader());
-				System.err.println(this.listaconsultas+"agregada consulta"+this.listaconsultas.size()+" port :"+this.recvport);
+				System.err.println("mgs en thread server:"+ msg.getHeader());
 				
 			}else {
 				
@@ -73,29 +72,30 @@ public class ThreadServer implements Runnable{
 					String consulta = ((Query) msg.getBody()).Consulta;
 					for(Path fileObject: this.so.files) {
 						if(fileObject.toString().equals(consulta)) {
-							System.out.println("Consulta de"+ fileObject.toString());
-							
+							System.out.println("Consulta de "+ fileObject.toString()+" ");
+							System.out.println("Body "+((Query) msg.getBody()).ms.getIp());
 							//Socket serverToMaster = new Socket(((Query) msg.getBody()).getIp(),this.serverPort);
 							//Socket serverToMaster = new Socket (this.masterIp,this.serverPort);
-							Socket serverToMaster = new Socket (this.masterIp,this.serverPort);
+							Socket serverToMaster = new Socket (((Query) msg.getBody()).ms.getIp(),((Query) msg.getBody()).ms.getPort());
 							System.err.println("Server To master"+this.serverPort);
 							ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 							serverOutput.flush();
 							Query query = (Query) msg.getBody();
-							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,query.getExtremoSt())));
+							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,query.getExtremoSt(),((Query) msg.getBody()).minResponse)));
 							
 						}//else {System.out.println("Consulta de 2:"+consulta+"  "+fileObject.toString());}
 					}
 				}else {
 					//}
 				//}
-					if(msg.getHeader().equals("RESPONSE")) {
+					if(msg.getHeader().equals("MASTERRESPONSE")) {
 						synchronized (this.listaconsultas) {
-							System.err.println("Server response"+this.serverPort);
-							System.err.println("Respuesta"+this.listaconsultas);
+//							System.err.println("Server response"+this.serverPort);
+							System.err.println("Respuesta"+this.listaconsultas.size());
 						for(Query id: this.listaconsultas) {
-							System.err.println("ids:"+((Query)id).id);
-							if (id.id == ((Response) msg.getBody() ).id ) {
+							System.out.println("id"+id.Consulta);
+							System.out.println("id"+id.Extremo);
+							if (id.Consulta.equals(((Response) msg.getBody() ).getConsulta() )) {
 								System.err.println("Respuesta");
 							}
 								

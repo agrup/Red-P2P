@@ -16,13 +16,19 @@ public class ThreadServerCoordinator implements Runnable  {
 	ArrayList<MasterStructure> masters;
 	private int count;
 	int maxCount;
+	ArrayList<Response> respoonses;
+	MasterStructure ms;
 
-	public ThreadServerCoordinator(ArrayList<ExtremosStructure> extremos, Socket server, ArrayList<MasterStructure> masters) {
+
+	public ThreadServerCoordinator(ArrayList<Response> responses ,ArrayList<ExtremosStructure> extremos, Socket server, ArrayList<MasterStructure> masters, MasterStructure ms) {
 		this.server = server;
 		this.extremos = extremos;
 		this.masters = masters;
 		this.count = 0;
 		this.maxCount=1;
+		this.respoonses=responses;
+		this.ms = ms;
+		
 	}
 
 	@Override
@@ -65,6 +71,12 @@ public class ThreadServerCoordinator implements Runnable  {
 				}
 				
 				if((msg.header).equals("QUERY")) {
+					synchronized (this.respoonses){
+						Response responseadd = new Response(((Query) msg.getBody()).id,((Query) msg.getBody()).getConsulta(),((Query) msg.getBody()).getExtremoSt(),((Query) msg.getBody()).getMinResponse());
+						this.respoonses.add(responseadd);
+						System.err.println("responsessss"+responseadd.getId() +" size"+this.respoonses.size());
+						
+					}
 
 					synchronized (this.extremos){
 						this.maxCount=((Query) msg.getBody()).getMinResponse();
@@ -81,33 +93,75 @@ public class ThreadServerCoordinator implements Runnable  {
 								ObjectOutputStream MasterToServer = new ObjectOutputStream (Toserver.getOutputStream());
 								MasterToServer.flush();
 								
-								MasterToServer.writeObject(new Message ("MASTERQUERY", msg.getBody()));
+								Query masterquery = new Query(((Query) msg.getBody()).getMinResponse(),this.ms,((Query) msg.getBody()).getConsulta(),((Query) msg.getBody()).getMinResponse());
+								MasterToServer.writeObject(new Message ("MASTERQUERY", masterquery));
 							}
-						};
-						while(this.count<this.maxCount) {
-							wait();
 						}
+//						synchronized (this.respoonses){
+//							System.out.println("salio del wait 0 "+((Query) msg.getBody()).getMinResponse()+" + "+this.respoonses.size());
+//							while(this.respoonses.size()-1<=((Query) msg.getBody()).getMinResponse()) {
+//								System.err.println("salio del wait 1"+this.respoonses.size());
+//								wait(1000);
+//								System.out.println("salio del wait 2"+this.maxCount);
+//							}
+//							
+//						}
+						
+					
 						
 					}
 				}else {
-					if(msg.header.equals("RESPONSE")) {
+					if(msg.header.equals("RESPONSE")) { 
 						
 						Response respuesta  = ((Response) msg.getBody());
-						
-						
-						
-						Socket Toserver = new Socket(((ExtremosStructure) respuesta.es).getIp(),((ExtremosStructure) respuesta.es).getPort());
-						
-						ObjectOutputStream serverToServer = new ObjectOutputStream (Toserver.getOutputStream());
-						serverToServer.flush();
-						
-						serverToServer.writeObject(new Message("RESPONSE", respuesta ));
-						
+//						
+//						this.count += 1;
+//						respuesta.servermatchs.add();
+						System.err.println("responses"+respuesta.getId() +" size"+this.respoonses.size());
+						for (Response resp: this.respoonses) {
+
+							//if(resp.getId() == respuesta.getId()&& resp.getConsulta().equals(respuesta.getConsulta()) ){
+							if(resp.getConsulta().equals(respuesta.getConsulta()) ){	
+								resp.addMatch(respuesta.es);
+								//if(respuesta.servermatchs)
+								System.err.println("salio del wait 1"+resp.minsServerMatch+" --- "+((Response) msg.getBody()).minsServerMatch);
+								if(true) {
+									
+									Socket Toserver = new Socket(((ExtremosStructure) resp.getExtremo()).getIp(),((ExtremosStructure) resp.getExtremo()).getPort());
+									
+								
+									
+									//Socket Toserver = new Socket(((ExtremosStructure) respuesta.es).getIp(),((ExtremosStructure) respuesta.es).getPort());
+									
+									ObjectOutputStream serverToServer = new ObjectOutputStream (Toserver.getOutputStream());
+									serverToServer.flush();
+									
+									
+									
+									serverToServer.writeObject(new Message("MASTERRESPONSE", respuesta ));
+								}
+							}
+						}
+//						notifyAll();
+//						System.err.println("salio del wait 1"+this.resp+" --- "+((Response) msg.getBody()).minsServerMatch);
+//						if(this.respoonses.size()-1<=((Response) msg.getBody()).minsServerMatch) {
+//							
+//						
+//							
+//							Socket Toserver = new Socket(((ExtremosStructure) respuesta.es).getIp(),((ExtremosStructure) respuesta.es).getPort());
+//							
+//							ObjectOutputStream serverToServer = new ObjectOutputStream (Toserver.getOutputStream());
+//							serverToServer.flush();
+//							
+//							
+//							
+//							serverToServer.writeObject(new Message("MASTERRESPONSE", respuesta ));
+//						}
 					}
 				}
 				
 
-		} catch (IOException | ClassNotFoundException | InterruptedException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

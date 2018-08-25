@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import Extremos.Query;
+import Extremos.Response;
 
 public class Master implements Runnable{
 	int port;
@@ -14,7 +15,7 @@ public class Master implements Runnable{
 	ArrayList<ExtremosStructure> extremos;
 	ArrayList<MasterStructure> mastersKnow;
 	String ip;
-	ArrayList<Query> querys;
+	ArrayList<Response> querys;
 	
 public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int portMasters) {
 	 this.port = port;
@@ -23,7 +24,7 @@ public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int p
 	 this.mastersKnow  = listaMasters;
 	 this.masters = new ArrayList<MasterStructure>();
 	 this.ip = ip;
-	 this.querys = new ArrayList<Query>();
+	 this.querys = new ArrayList<Response>();
 	// this.masterStructure = new MasterStructure(this.ip,this.port,this.portMasters);
 	 
 }
@@ -61,9 +62,8 @@ public Master(String ip,int port ,ArrayList<MasterStructure> listaMasters, int p
 			while (true){
 				
 				Socket server = master.accept();
-				System.out.println("NEW SERVER RECEIVED now");
-				
-				ThreadServerCoordinator tmc = new ThreadServerCoordinator(this.extremos,server,this.masters);
+				MasterStructure ms = new MasterStructure(this.ip,this.port,this.portMasters);
+				ThreadServerCoordinator tmc = new ThreadServerCoordinator(this.querys,this.extremos,server,this.masters,ms);
 				Thread tm = new Thread (tmc);
 				tm.start();
 				

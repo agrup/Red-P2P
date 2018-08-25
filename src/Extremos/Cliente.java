@@ -32,7 +32,7 @@ public class Cliente implements Runnable{
 			ObjectOutputStream serverOutput = new ObjectOutputStream (s.getOutputStream());
 			serverOutput.flush();
 			//ObjectInputStream serverInput = new ObjectInputStream (s.getInputStream());
-			System.err.println("serverQuery");
+
 			Message msg =  new Message ("QUERY", this.consulta);
 			serverOutput.writeObject(msg);
 			

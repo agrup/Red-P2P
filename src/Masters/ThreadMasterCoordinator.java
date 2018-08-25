@@ -46,7 +46,6 @@ public class ThreadMasterCoordinator implements Runnable{
 		Message msg =  (Message) MasterrInput.readObject();
 		
 		
-		
 		System.out.println("Master: "+this.masterStructure.getMasterPort()+ " MSG RECv : "+msg.getHeader().toString()+" from"+( (MasterStructure) msg.getBody()).getMasterPort());
 		
 		
