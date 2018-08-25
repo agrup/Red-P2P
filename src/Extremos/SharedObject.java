@@ -19,13 +19,13 @@ public class SharedObject implements Serializable{
 	public SharedObject (String path) {
 		this.path= Paths.get(path);
 		this.files = new ArrayList<Path>();
-		 System.out.println("In listAllfiles(String path) method");
+		
          try(Stream<Path> paths = Files.walk(Paths.get(path))) {
 
              paths.forEach(filePath -> {
                  if (Files.isRegularFile(filePath)) {
                      try {
-                    	 System.out.println("Archivo  path"+ (this.path));
+
                     	 System.out.println("Archivo filepath name "+ ((filePath).getFileName()));
                     	 
                          getFilePath(filePath);

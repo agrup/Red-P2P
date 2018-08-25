@@ -19,7 +19,7 @@ public class ThreadServer implements Runnable{
 	int recvport;
 	SharedObject so;
 	ExtremosStructure es;
-	public ArrayList<Query> consultas;
+	public ArrayList<Query> listaconsultas;
 	int minResponse;
 
 
@@ -31,7 +31,7 @@ public class ThreadServer implements Runnable{
 		this.masterIp=masterIp;
 		this.so = so;
 		this.es=es;
-		this.consultas = consultas;
+		this.listaconsultas = consultas;
 		this.minResponse= minResponse;
 	}
 	
@@ -47,7 +47,7 @@ public class ThreadServer implements Runnable{
 			
 			ObjectInputStream clientInput = new ObjectInputStream (this.earing.getInputStream());
 			Message msg = (Message) clientInput.readObject();
-			
+			System.err.println("mgs en t server:"+ msg.getHeader());
 			
 			
 			if(msg.getHeader().equals("QUERY")) {
@@ -58,13 +58,13 @@ public class ThreadServer implements Runnable{
 				ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 				serverOutput.flush();
 				ExtremosStructure st = new ExtremosStructure(this.masterIp,this.recvport);
-				Query query = new Query(this.consultas.size()+1,st,(String) msg.getBody(),this.minResponse);
-				synchronized (this.consultas) {
-				this.consultas.add(query);}
+				Query query = new Query(this.listaconsultas.size()+1,st,(String) msg.getBody(),this.minResponse);
+				synchronized (this.listaconsultas) {
+				this.listaconsultas.add(query);}
 				serverOutput.writeObject(new Message ("QUERY",query));
 				
-
-				System.err.println(this.consultas+"agregada consulta"+this.consultas.size());
+				System.err.println("mgs en t server:"+ msg.getHeader());
+				System.err.println(this.listaconsultas+"agregada consulta"+this.listaconsultas.size()+" port :"+this.recvport);
 				
 			}else {
 				
@@ -76,11 +76,13 @@ public class ThreadServer implements Runnable{
 							System.out.println("Consulta de"+ fileObject.toString());
 							
 							//Socket serverToMaster = new Socket(((Query) msg.getBody()).getIp(),this.serverPort);
+							//Socket serverToMaster = new Socket (this.masterIp,this.serverPort);
 							Socket serverToMaster = new Socket (this.masterIp,this.serverPort);
+							System.err.println("Server To master"+this.serverPort);
 							ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 							serverOutput.flush();
-							
-							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,this.es)));
+							Query query = (Query) msg.getBody();
+							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,query.getExtremoSt())));
 							
 						}//else {System.out.println("Consulta de 2:"+consulta+"  "+fileObject.toString());}
 					}
@@ -88,9 +90,10 @@ public class ThreadServer implements Runnable{
 					//}
 				//}
 					if(msg.getHeader().equals("RESPONSE")) {
-						synchronized (this.consultas) {
-							System.err.println("Respuesta"+this.consultas);
-						for(Query id: this.consultas) {
+						synchronized (this.listaconsultas) {
+							System.err.println("Server response"+this.serverPort);
+							System.err.println("Respuesta"+this.listaconsultas);
+						for(Query id: this.listaconsultas) {
 							System.err.println("ids:"+((Query)id).id);
 							if (id.id == ((Response) msg.getBody() ).id ) {
 								System.err.println("Respuesta");
@@ -99,11 +102,11 @@ public class ThreadServer implements Runnable{
 						}
 						
 						}
-						System.err.println("Consulatas"+this.consultas);
-						System.err.println("Respuesta Nodo con consulta id:::"+ ((Response) msg.getBody() ).id+ " consulta:"+((Response) msg.getBody() ).consulta);
+						//System.err.println("Consulatas"+this.listaconsultas);
+						//System.err.println("Respuesta Nodo con consulta id:::"+ ((Response) msg.getBody() ).id+ " consulta:"+((Response) msg.getBody() ).consulta);
 //				for(SharedObject so:this.so.getFiles) {
 //					
-				}
+					}
 				}
 			}
 			

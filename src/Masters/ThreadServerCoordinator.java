@@ -36,7 +36,7 @@ public class ThreadServerCoordinator implements Runnable  {
 		Message msg =  (Message) MasterrInput.readObject();
 		
 
-			System.err.println(msg.getHeader());
+			System.err.println("mgs en tsc"+ msg.getHeader());
 
 			
 				if((msg.header).equals("ADD")) {
@@ -93,6 +93,7 @@ public class ThreadServerCoordinator implements Runnable  {
 					if(msg.header.equals("RESPONSE")) {
 						
 						Response respuesta  = ((Response) msg.getBody());
+						
 						
 						
 						Socket Toserver = new Socket(((ExtremosStructure) respuesta.es).getIp(),((ExtremosStructure) respuesta.es).getPort());
