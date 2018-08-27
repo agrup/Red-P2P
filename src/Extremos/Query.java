@@ -28,6 +28,12 @@ public class Query implements Serializable{
 		this.minResponse = min;
 	}
 	
+	public Query(ExtremosStructure es,String consulta){
+		this.ms = ms;
+		this.Consulta = consulta;
+	}
+	
+	
 	
 	public ExtremosStructure getExtremoSt() {
 		return this.ext;

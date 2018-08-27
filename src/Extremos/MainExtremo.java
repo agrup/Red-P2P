@@ -17,6 +17,13 @@ public class MainExtremo {
 		Thread s1Thread = new Thread (s1);
 		s1Thread.start();
 		
+		
+		Server s2 = new Server ("localhost",8002, 9001,"Compartido/Server2");
+		
+		Thread s2Thread = new Thread (s2);
+		s2Thread.start();
+		
+		
 		Thread.sleep(1000);
 //		
 		Cliente c = new Cliente ("localhost",6000, 8000,"archivo 3 nosdo2");

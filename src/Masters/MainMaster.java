@@ -23,13 +23,13 @@ public class MainMaster {
 		Thread masterThread = new Thread (master);
 		masterThread.start();
 		
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 		
 		Master master2 = new Master ("localhost",9001,listaMasters ,3001);
 		Thread master2Thread = new Thread (master2);
 		master2Thread.start();
 		
-		Thread.sleep(3000);
+		Thread.sleep(1000);
 		
 		Master master3 = new Master ("localhost",9002,listaMasters ,3002);
 		Thread master3Thread = new Thread (master3);

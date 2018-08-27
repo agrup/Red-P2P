@@ -72,9 +72,13 @@ public class ThreadServerCoordinator implements Runnable  {
 				
 				if((msg.header).equals("QUERY")) {
 					synchronized (this.respoonses){
+						
+						
+						System.out.println("**********************************************"+((Query) msg.getBody()).getExtremoSt());
+						
 						Response responseadd = new Response(((Query) msg.getBody()).id,((Query) msg.getBody()).getConsulta(),((Query) msg.getBody()).getExtremoSt(),((Query) msg.getBody()).getMinResponse());
 						this.respoonses.add(responseadd);
-						System.err.println("responsessss"+responseadd.getId() +" size"+this.respoonses.size());
+					
 						
 					}
 
@@ -93,7 +97,9 @@ public class ThreadServerCoordinator implements Runnable  {
 								ObjectOutputStream MasterToServer = new ObjectOutputStream (Toserver.getOutputStream());
 								MasterToServer.flush();
 								
-								Query masterquery = new Query(((Query) msg.getBody()).getMinResponse(),this.ms,((Query) msg.getBody()).getConsulta(),((Query) msg.getBody()).getMinResponse());
+								Query masterquery = new Query(((Query) msg.getBody()).getMinResponse(),ms,((Query) msg.getBody()).getConsulta(),((Query) msg.getBody()).getMinResponse());
+								
+								
 								MasterToServer.writeObject(new Message ("MASTERQUERY", masterquery));
 							}
 						}
@@ -117,14 +123,17 @@ public class ThreadServerCoordinator implements Runnable  {
 //						
 //						this.count += 1;
 //						respuesta.servermatchs.add();
-						System.err.println("responses"+respuesta.getId() +" size"+this.respoonses.size());
+						//System.err.println("responses"+respuesta.getId() +" size"+this.respoonses.size());
 						for (Response resp: this.respoonses) {
 
 							//if(resp.getId() == respuesta.getId()&& resp.getConsulta().equals(respuesta.getConsulta()) ){
 							if(resp.getConsulta().equals(respuesta.getConsulta()) ){	
-								resp.addMatch(respuesta.es);
+								System.out.println(respuesta.getExtremo()+"   dsfdsfdsf");
+								resp.addMatch(respuesta.getExtremo());
+								System.out.println("consulat 3wwww"+resp);
+								System.out.println("consulat3"+resp.getId());
 								//if(respuesta.servermatchs)
-								System.err.println("salio del wait 1"+resp.minsServerMatch+" --- "+((Response) msg.getBody()).minsServerMatch);
+								//System.err.println("salio del wait 1"+resp.minsServerMatch+" --- "+((Response) msg.getBody()).minsServerMatch);
 								if(true) {
 									
 									Socket Toserver = new Socket(((ExtremosStructure) resp.getExtremo()).getIp(),((ExtremosStructure) resp.getExtremo()).getPort());
@@ -138,7 +147,15 @@ public class ThreadServerCoordinator implements Runnable  {
 									
 									
 									
-									serverToServer.writeObject(new Message("MASTERRESPONSE", respuesta ));
+									
+									
+									serverToServer.writeObject(new Message("MASTERRESPONSE", resp ));
+									
+									
+									
+									
+									
+									
 								}
 							}
 						}

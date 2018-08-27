@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import Masters.ExtremosStructure;
+import Masters.MasterStructure;
 
 public class Response implements Serializable{
 
@@ -12,6 +13,7 @@ public class Response implements Serializable{
 	public ExtremosStructure es;
 	public ArrayList<ExtremosStructure> servermatchs;
 	public int minsServerMatch;
+	MasterStructure ms;
 	
 	public Response (int id,String consulta, ExtremosStructure es, int min) {
 	
@@ -21,6 +23,15 @@ public class Response implements Serializable{
 	this.servermatchs = new ArrayList<ExtremosStructure>();
 	this.minsServerMatch = min;
 	}
+	
+	
+	public Response (int id,String consulta, MasterStructure es) {
+		this.setId(id);
+		this.setConsulta(consulta);
+		this.ms =es;
+		this.servermatchs = new ArrayList<ExtremosStructure>();
+
+	}
 
 	public ExtremosStructure getExtremo() {
 		return this.es;
@@ -28,6 +39,7 @@ public class Response implements Serializable{
 	
 	public void addMatch(ExtremosStructure extremo ) {
 		this.servermatchs.add(extremo);
+		System.out.println(this.servermatchs.size());
 	}
 
 	public int getId() {

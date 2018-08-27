@@ -1,5 +1,7 @@
 package Extremos;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -58,6 +60,9 @@ public class ThreadServer implements Runnable{
 				ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 				serverOutput.flush();
 				ExtremosStructure st = new ExtremosStructure(this.masterIp,this.recvport);
+				
+				System.out.println("------------------------------------------"+st.getIp());
+				
 				Query query = new Query(this.listaconsultas.size()+1,st,(String) msg.getBody(),this.minResponse);
 				synchronized (this.listaconsultas) {
 				this.listaconsultas.add(query);}
@@ -81,7 +86,8 @@ public class ThreadServer implements Runnable{
 							ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 							serverOutput.flush();
 							Query query = (Query) msg.getBody();
-							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,query.getExtremoSt(),((Query) msg.getBody()).minResponse)));
+							System.out.println("quer -mmS  "+query.ms.getIp());
+							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,query.ms)));
 							
 						}//else {System.out.println("Consulta de 2:"+consulta+"  "+fileObject.toString());}
 					}
@@ -90,23 +96,82 @@ public class ThreadServer implements Runnable{
 				//}
 					if(msg.getHeader().equals("MASTERRESPONSE")) {
 						synchronized (this.listaconsultas) {
+							Response respuesta = (Response) msg.getBody();
 //							System.err.println("Server response"+this.serverPort);
-							System.err.println("Respuesta"+this.listaconsultas.size());
-						for(Query id: this.listaconsultas) {
-							System.out.println("id"+id.Consulta);
-							System.out.println("id"+id.Extremo);
-							if (id.Consulta.equals(((Response) msg.getBody() ).getConsulta() )) {
-								System.err.println("Respuesta");
-							}
+							
+							
+							
+							for(Query id: this.listaconsultas) {
 								
-						}
+								
+								System.out.println("id"+id.Consulta);
+								System.out.println("consulat2"+respuesta.getConsulta());
+								
+								
+								if (id.Consulta.equals(respuesta.getConsulta() )) {
+									
+									System.out.println("consulat casa "+respuesta.servermatchs.size());
+									
+									System.out.println(respuesta.servermatchs.get(0));
+						
+									for(ExtremosStructure server: respuesta.servermatchs) {
+										
+										System.out.println("extremo"+server);
+//										
+//										Socket wgetToServer = new Socket (server.getIp(),server.getPort());
+//							
+//										
+//										
+//										ObjectOutputStream serverToServer = new ObjectOutputStream (wgetToServer.getOutputStream());
+//										serverToServer.flush();
+//										
+//										
+//										
+//										serverToServer.writeObject(new Message("WGET", new Query (this.es, respuesta.getConsulta() )));
+//										
+//										
+//										
+//										
+//										
+									}
+								}
+									
+							}
 						
 						}
 						//System.err.println("Consulatas"+this.listaconsultas);
 						//System.err.println("Respuesta Nodo con consulta id:::"+ ((Response) msg.getBody() ).id+ " consulta:"+((Response) msg.getBody() ).consulta);
 //				for(SharedObject so:this.so.getFiles) {
 //					
+					}else {
+						if(msg.getHeader().equals("WGET")) {
+							for (Path file: this.so.files) {
+								Query message = (Query) msg.getBody();
+								if(message.Consulta.equals(file)) {
+									System.out.println("File find");
+									
+									ObjectOutputStream serverToServer = new ObjectOutputStream (this.earing.getOutputStream());
+									serverToServer.flush();
+									System.out.println("File find");
+								      String cadena;
+								      FileReader f = new FileReader(message.getConsulta());
+								      BufferedReader b = new BufferedReader(f);
+								      while((cadena = b.readLine())!=null) {
+								          System.out.println(cadena);
+								      }
+								      b.close();
+									
+									//serverToServer.writeObject(new Message("WPUSH",  ));
+									
+									
+									
+									
+								}
+							}
+							
+						}
 					}
+					
 				}
 			}
 			
