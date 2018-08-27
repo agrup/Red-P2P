@@ -87,7 +87,7 @@ public class ThreadServer implements Runnable{
 							serverOutput.flush();
 							Query query = (Query) msg.getBody();
 							System.out.println("quer -mmS  "+query.ms.getIp());
-							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,query.ms)));
+							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,this.es)));
 							
 						}//else {System.out.println("Consulta de 2:"+consulta+"  "+fileObject.toString());}
 					}
@@ -117,22 +117,22 @@ public class ThreadServer implements Runnable{
 									for(ExtremosStructure server: respuesta.servermatchs) {
 										
 										System.out.println("extremo"+server);
-//										
-//										Socket wgetToServer = new Socket (server.getIp(),server.getPort());
-//							
-//										
-//										
-//										ObjectOutputStream serverToServer = new ObjectOutputStream (wgetToServer.getOutputStream());
-//										serverToServer.flush();
-//										
-//										
-//										
-//										serverToServer.writeObject(new Message("WGET", new Query (this.es, respuesta.getConsulta() )));
-//										
-//										
-//										
-//										
-//										
+										
+										Socket wgetToServer = new Socket (server.getIp(),server.getPort());
+							
+										
+										
+										ObjectOutputStream serverToServer = new ObjectOutputStream (wgetToServer.getOutputStream());
+										serverToServer.flush();
+										
+										
+										
+										serverToServer.writeObject(new Message("WGET", new Query (this.es, respuesta.getConsulta() )));
+										
+										
+										
+										
+										
 									}
 								}
 									
@@ -147,7 +147,7 @@ public class ThreadServer implements Runnable{
 						if(msg.getHeader().equals("WGET")) {
 							for (Path file: this.so.files) {
 								Query message = (Query) msg.getBody();
-								if(message.Consulta.equals(file)) {
+							//	if(message.Consulta.equals(file)) {
 									System.out.println("File find");
 									
 									ObjectOutputStream serverToServer = new ObjectOutputStream (this.earing.getOutputStream());
@@ -166,7 +166,7 @@ public class ThreadServer implements Runnable{
 									
 									
 									
-								}
+								//}
 							}
 							
 						}

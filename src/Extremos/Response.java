@@ -33,6 +33,13 @@ public class Response implements Serializable{
 
 	}
 
+	public Response(int id, String consulta, ExtremosStructure es) {
+		this.setId(id);
+		this.setConsulta(consulta);
+		this.es = es;
+	}
+
+
 	public ExtremosStructure getExtremo() {
 		return this.es;
 	}

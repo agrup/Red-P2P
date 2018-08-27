@@ -130,7 +130,7 @@ public class ThreadServerCoordinator implements Runnable  {
 							if(resp.getConsulta().equals(respuesta.getConsulta()) ){	
 								System.out.println(respuesta.getExtremo()+"   dsfdsfdsf");
 								resp.addMatch(respuesta.getExtremo());
-								System.out.println("consulat 3wwww"+resp);
+								System.out.println("consulat 3wwww"+respuesta);
 								System.out.println("consulat3"+resp.getId());
 								//if(respuesta.servermatchs)
 								//System.err.println("salio del wait 1"+resp.minsServerMatch+" --- "+((Response) msg.getBody()).minsServerMatch);
