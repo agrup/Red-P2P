@@ -29,7 +29,7 @@ public class Query implements Serializable{
 	}
 	
 	public Query(ExtremosStructure es,String consulta){
-		this.ms = ms;
+		this.ext = es;
 		this.Consulta = consulta;
 	}
 	

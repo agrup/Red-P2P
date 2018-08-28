@@ -1,6 +1,9 @@
 package Extremos;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -104,19 +107,19 @@ public class ThreadServer implements Runnable{
 							for(Query id: this.listaconsultas) {
 								
 								
-								System.out.println("id"+id.Consulta);
-								System.out.println("consulat2"+respuesta.getConsulta());
+//								System.out.println("id"+id.Consulta);
+//								System.out.println("consulat2"+respuesta.getConsulta());
 								
 								
 								if (id.Consulta.equals(respuesta.getConsulta() )) {
-									
-									System.out.println("consulat casa "+respuesta.servermatchs.size());
-									
-									System.out.println(respuesta.servermatchs.get(0));
+//									
+//									System.out.println("consulat casa "+respuesta.servermatchs.size());
+//									
+									System.out.println("port"   +this.es.getPort());
 						
 									for(ExtremosStructure server: respuesta.servermatchs) {
 										
-										System.out.println("extremo"+server);
+//										System.out.println("extremo"+server);
 										
 										Socket wgetToServer = new Socket (server.getIp(),server.getPort());
 							
@@ -145,30 +148,124 @@ public class ThreadServer implements Runnable{
 //					
 					}else {
 						if(msg.getHeader().equals("WGET")) {
+							
+							
+							System.err.println("query:"+((Query) msg.getBody()).getConsulta());
+							
+							
+							
+							
 							for (Path file: this.so.files) {
+								System.err.println("FIle:"+file);
+								
 								Query message = (Query) msg.getBody();
-							//	if(message.Consulta.equals(file)) {
+								
+								System.out.println("File find");
+								
+								if(message.Consulta.equals(file.toString())) {
+								
 									System.out.println("File find");
 									
-									ObjectOutputStream serverToServer = new ObjectOutputStream (this.earing.getOutputStream());
+									
+									Socket socket = new Socket (message.getIp(),message.ext.getPort());
+									
+									
+									ObjectOutputStream serverToServer = new ObjectOutputStream (socket.getOutputStream());
 									serverToServer.flush();
-									System.out.println("File find");
-								      String cadena;
-								      FileReader f = new FileReader(message.getConsulta());
-								      BufferedReader b = new BufferedReader(f);
-								      while((cadena = b.readLine())!=null) {
-								          System.out.println(cadena);
-								      }
-								      b.close();
-									
-									//serverToServer.writeObject(new Message("WPUSH",  ));
+									System.out.println("File find: "+message.getConsulta());
+								    //String cadena;
+									//FileOutputStream f = null;
+									ArrayList<Byte> FileToSend = new ArrayList<Byte>();
 									
 									
+									FileInputStream fileInputStream = null;
+									
+									try {
+									
+										
+										File fileBytes = new File(so.path.toString()+"/"+file.toString());
+										byte[] bFile = new byte[(int) fileBytes.length()];
+										
+										fileInputStream = new FileInputStream(fileBytes);
+							            fileInputStream.read(bFile);
+										
+//										
+//										FileInputStream in = new FileInputStream(so.path.toString()+"/"+file.toString());
+//									
+//										int c;
+//								        while ( (c = in.read()) != -1 ) {
+//								        	
+//								        	System.out.print((byte)c + " ");
+//								        	
+//								        	FileToSend.add((byte) c);
+//								        	
+//								        }
+								            
+											
+										
+										
+								      //f = new FileOutputStream(so.path.toString()+"/"+file.toString());
+								      //FileReader f = new FileReader(so.path.toString()+"/"+file.toString());
+//								      BufferedReader b = new BufferedReader(f);
+//								      byte[] bytes;
+//								      while((cadena = b.readLine())!=null) {
+//								    	  
+//								    	  System.out.println("cademna"+cadena);
+//								      }
+//								      b.close();
 									
 									
-								//}
+									
+								    serverToServer.writeObject(new Message("WPUSH", new fileShared(((Query) msg.getBody()).getConsulta(),bFile)));
+									
+									}finally {
+								      
+									
+									}
+									
+									
+								}
 							}
 							
+						}else {
+							if(msg.getHeader().equals("WPUSH")) {
+								
+								byte[] bFile = ((fileShared) msg.getBody()).bFile;
+								
+								String title = ((fileShared) msg.getBody()).name;
+								
+								
+								
+								 try (FileOutputStream fileOuputStream = new FileOutputStream(so.path.toString()+"/"+title)) {
+							            fileOuputStream.write(bFile);
+							        } catch (IOException e) {
+							            e.printStackTrace();
+							        }
+								
+								//writeBytesToFile(bFile, UPLOAD_FOLDER + title);
+									
+
+									//System.err.println("FIle:"+( ( (fileShared) msg.getBody() ).file ));
+//									so.path.toString()++
+//									ArrayList<Byte> f = ( (fileShared) msg.getBody() ).file;
+//									
+//										System.out.println("File find");
+//										
+//
+//										
+//									      String cadena;
+//									     // FileReader f = new FileReader(so.path.toString()+"/"+file.toString());
+//									     // BufferedReader b = new BufferedReader(f);
+//									      while((cadena = f.readLine())!=null) {
+//									          System.out.println("cademna"+cadena);
+//									      }
+//									      f.close();
+
+										
+
+								
+								
+							}
 						}
 					}
 					

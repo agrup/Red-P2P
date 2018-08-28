@@ -26,7 +26,7 @@ public class MainExtremo {
 		
 		Thread.sleep(1000);
 //		
-		Cliente c = new Cliente ("localhost",6000, 8000,"archivo 3 nosdo2");
+		Cliente c = new Cliente ("localhost",6000, 8000,"img.jpg");
 		Thread cThread = new Thread (c);
 		cThread.start();
 
