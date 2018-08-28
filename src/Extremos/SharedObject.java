@@ -26,11 +26,11 @@ public class SharedObject implements Serializable{
                  if (Files.isRegularFile(filePath)) {
                      try {
 
-                    	 System.out.println("File ADD name "+ ((filePath).getFileName()));
+//                    	 System.out.println("File ADD name "+ ((filePath).getFileName()));
                     	 
                          addFilePath(filePath);
                      } catch (Exception e) {
-                    	 System.err.println("Errot on file directory");
+//                    	 System.err.println("Errot on file directory");
                          e.printStackTrace();
                      }
                  }
@@ -47,7 +47,7 @@ public class SharedObject implements Serializable{
 	private void addFilePath(Path filePath) {
 		
 		this.files.add(filePath.getFileName());
-		System.out.println("Agregado archivo");
+		//System.out.println("Agregado archivo");
 
 	}
 

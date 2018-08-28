@@ -46,7 +46,7 @@ public class ThreadMasterCoordinator implements Runnable{
 		Message msg =  (Message) MasterrInput.readObject();
 		
 		
-		System.out.println("Master: "+this.masterStructure.getMasterPort()+ " MSG RECv : "+msg.getHeader().toString()+" from"+( (MasterStructure) msg.getBody()).getMasterPort());
+		System.err.println("Master: "+this.masterStructure.getMasterPort()+ " MSG RECv : "+msg.getHeader().toString()+" from"+( (MasterStructure) msg.getBody()).getMasterPort());
 		
 		
 		// check if list of master is empty

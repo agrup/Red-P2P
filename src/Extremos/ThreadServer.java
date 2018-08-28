@@ -64,14 +64,14 @@ public class ThreadServer implements Runnable{
 				serverOutput.flush();
 				ExtremosStructure st = new ExtremosStructure(this.masterIp,this.recvport);
 				
-				System.out.println("------------------------------------------"+st.getIp());
+
 				
 				Query query = new Query(this.listaconsultas.size()+1,st,(String) msg.getBody(),this.minResponse);
 				synchronized (this.listaconsultas) {
 				this.listaconsultas.add(query);}
 				serverOutput.writeObject(new Message ("QUERY",query));
 				
-				System.err.println("mgs en thread server:"+ msg.getHeader());
+				
 				
 			}else {
 				
@@ -80,16 +80,16 @@ public class ThreadServer implements Runnable{
 					String consulta = ((Query) msg.getBody()).Consulta;
 					for(Path fileObject: this.so.files) {
 						if(fileObject.toString().equals(consulta)) {
-							System.out.println("Consulta de "+ fileObject.toString()+" ");
-							System.out.println("Body "+((Query) msg.getBody()).ms.getIp());
+//							System.out.println("Consulta de "+ fileObject.toString()+" ");
+//							System.out.println("Body "+((Query) msg.getBody()).ms.getIp());
 							//Socket serverToMaster = new Socket(((Query) msg.getBody()).getIp(),this.serverPort);
 							//Socket serverToMaster = new Socket (this.masterIp,this.serverPort);
 							Socket serverToMaster = new Socket (((Query) msg.getBody()).ms.getIp(),((Query) msg.getBody()).ms.getPort());
-							System.err.println("Server To master"+this.serverPort);
+							//System.err.println("Server To master"+this.serverPort);
 							ObjectOutputStream serverOutput = new ObjectOutputStream (serverToMaster.getOutputStream());
 							serverOutput.flush();
 							Query query = (Query) msg.getBody();
-							System.out.println("quer -mmS  "+query.ms.getIp());
+
 							serverOutput.writeObject(new Message("RESPONSE",new Response(((Query) msg.getBody()).id,consulta,this.es)));
 							
 						}//else {System.out.println("Consulta de 2:"+consulta+"  "+fileObject.toString());}
@@ -102,7 +102,7 @@ public class ThreadServer implements Runnable{
 							Response respuesta = (Response) msg.getBody();
 //							System.err.println("Server response"+this.serverPort);
 							
-							
+							boolean flag = true;
 							
 							for(Query id: this.listaconsultas) {
 								
@@ -115,7 +115,8 @@ public class ThreadServer implements Runnable{
 //									
 //									System.out.println("consulat casa "+respuesta.servermatchs.size());
 //									
-									System.out.println("port"   +this.es.getPort());
+									//System.out.println("port"   +this.es.getPort());
+									
 						
 									for(ExtremosStructure server: respuesta.servermatchs) {
 										
@@ -129,11 +130,13 @@ public class ThreadServer implements Runnable{
 										serverToServer.flush();
 										
 										
+										if(flag) {
+											flag= false;
 										
 										serverToServer.writeObject(new Message("WGET", new Query (this.es, respuesta.getConsulta() )));
 										
 										
-										
+										}
 										
 										
 									}
@@ -142,29 +145,19 @@ public class ThreadServer implements Runnable{
 							}
 						
 						}
-						//System.err.println("Consulatas"+this.listaconsultas);
-						//System.err.println("Respuesta Nodo con consulta id:::"+ ((Response) msg.getBody() ).id+ " consulta:"+((Response) msg.getBody() ).consulta);
-//				for(SharedObject so:this.so.getFiles) {
-//					
+
 					}else {
 						if(msg.getHeader().equals("WGET")) {
 							
-							
-							System.err.println("query:"+((Query) msg.getBody()).getConsulta());
-							
-							
-							
-							
+
 							for (Path file: this.so.files) {
-								System.err.println("FIle:"+file);
 								
 								Query message = (Query) msg.getBody();
-								
-								System.out.println("File find");
+
+								boolean flag = true;
 								
 								if(message.Consulta.equals(file.toString())) {
 								
-									System.out.println("File find");
 									
 									
 									Socket socket = new Socket (message.getIp(),message.ext.getPort());
@@ -172,16 +165,15 @@ public class ThreadServer implements Runnable{
 									
 									ObjectOutputStream serverToServer = new ObjectOutputStream (socket.getOutputStream());
 									serverToServer.flush();
-									System.out.println("File find: "+message.getConsulta());
-								    //String cadena;
-									//FileOutputStream f = null;
+
+
 									ArrayList<Byte> FileToSend = new ArrayList<Byte>();
 									
 									
 									FileInputStream fileInputStream = null;
 									
 									try {
-									
+										
 										
 										File fileBytes = new File(so.path.toString()+"/"+file.toString());
 										byte[] bFile = new byte[(int) fileBytes.length()];
@@ -189,35 +181,10 @@ public class ThreadServer implements Runnable{
 										fileInputStream = new FileInputStream(fileBytes);
 							            fileInputStream.read(bFile);
 										
-//										
-//										FileInputStream in = new FileInputStream(so.path.toString()+"/"+file.toString());
-//									
-//										int c;
-//								        while ( (c = in.read()) != -1 ) {
-//								        	
-//								        	System.out.print((byte)c + " ");
-//								        	
-//								        	FileToSend.add((byte) c);
-//								        	
-//								        }
-								            
-											
+
+
+											serverToServer.writeObject(new Message("WPUSH", new fileShared(((Query) msg.getBody()).getConsulta(),bFile)));
 										
-										
-								      //f = new FileOutputStream(so.path.toString()+"/"+file.toString());
-								      //FileReader f = new FileReader(so.path.toString()+"/"+file.toString());
-//								      BufferedReader b = new BufferedReader(f);
-//								      byte[] bytes;
-//								      while((cadena = b.readLine())!=null) {
-//								    	  
-//								    	  System.out.println("cademna"+cadena);
-//								      }
-//								      b.close();
-									
-									
-									
-								    serverToServer.writeObject(new Message("WPUSH", new fileShared(((Query) msg.getBody()).getConsulta(),bFile)));
-									
 									}finally {
 								      
 									
@@ -238,30 +205,16 @@ public class ThreadServer implements Runnable{
 								
 								 try (FileOutputStream fileOuputStream = new FileOutputStream(so.path.toString()+"/"+title)) {
 							            fileOuputStream.write(bFile);
+							            
+							           
+							            
+							            
 							        } catch (IOException e) {
 							            e.printStackTrace();
 							        }
-								
-								//writeBytesToFile(bFile, UPLOAD_FOLDER + title);
-									
 
-									//System.err.println("FIle:"+( ( (fileShared) msg.getBody() ).file ));
-//									so.path.toString()++
-//									ArrayList<Byte> f = ( (fileShared) msg.getBody() ).file;
-//									
-//										System.out.println("File find");
-//										
-//
-//										
-//									      String cadena;
-//									     // FileReader f = new FileReader(so.path.toString()+"/"+file.toString());
-//									     // BufferedReader b = new BufferedReader(f);
-//									      while((cadena = f.readLine())!=null) {
-//									          System.out.println("cademna"+cadena);
-//									      }
-//									      f.close();
 
-										
+								 System.out.println("Archivo "+title+" Download Complete");
 
 								
 								
