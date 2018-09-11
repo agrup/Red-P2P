@@ -39,12 +39,12 @@ public class SharedObject implements Serializable{
              // TODO Auto-generated catch block
              e.printStackTrace();
          } 
-		
+		listFiles();
 		
 		
 	}
 	
-	private void addFilePath(Path filePath) {
+	public void addFilePath(Path filePath) {
 		
 		this.files.add(filePath.getFileName());
 		//System.out.println("Agregado archivo");
@@ -53,6 +53,37 @@ public class SharedObject implements Serializable{
 
 	public void setpath (String path) {
 		this.path = Paths.get(path);
+	}
+	
+	public void listFiles() {
+		System.out.println("files shared");
+		for(Path file: this.files) {
+			System.out.println(file.toString());
+		}
+	}
+	
+	
+	public void refrshFiles () {
+		this.files = new ArrayList<Path>();
+        try(Stream<Path> paths = Files.walk(this.path)) {
+
+            paths.forEach(filePath -> {
+                if (Files.isRegularFile(filePath)) {
+                    try {
+
+//                   	 System.out.println("File ADD name "+ ((filePath).getFileName()));
+                   	 
+                        addFilePath(filePath);
+                    } catch (Exception e) {
+//                   	 System.err.println("Errot on file directory");
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
 	}
 	
 	

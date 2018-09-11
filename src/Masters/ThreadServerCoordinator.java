@@ -126,7 +126,7 @@ public class ThreadServerCoordinator implements Runnable  {
 
 								//if(respuesta.servermatchs)
 								//System.err.println("salio del wait 1"+resp.minsServerMatch+" --- "+((Response) msg.getBody()).minsServerMatch);
-								if(true) {
+								if(resp.servermatchs.size()<= this.maxCount) {
 									
 									Socket Toserver = new Socket(((ExtremosStructure) resp.getExtremo()).getIp(),((ExtremosStructure) resp.getExtremo()).getPort());
 

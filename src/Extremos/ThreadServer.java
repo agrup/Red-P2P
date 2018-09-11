@@ -52,7 +52,7 @@ public class ThreadServer implements Runnable{
 			
 			ObjectInputStream clientInput = new ObjectInputStream (this.earing.getInputStream());
 			Message msg = (Message) clientInput.readObject();
-			System.err.println("mgs en t server:"+ msg.getHeader());
+			//System.err.println("mgs en t server:"+ msg.getHeader());
 			
 			
 			if(msg.getHeader().equals("QUERY")) {
@@ -205,8 +205,9 @@ public class ThreadServer implements Runnable{
 								
 								 try (FileOutputStream fileOuputStream = new FileOutputStream(so.path.toString()+"/"+title)) {
 							            fileOuputStream.write(bFile);
-							            
-							           
+							            this.so.refrshFiles();
+							            System.out.println("New files ");
+							            this.so.listFiles();
 							            
 							            
 							        } catch (IOException e) {
@@ -218,6 +219,10 @@ public class ThreadServer implements Runnable{
 
 								
 								
+							}else {
+								if(msg.getHeader().equals("Listar")) {
+									this.so.listFiles();
+								}
 							}
 						}
 					}
@@ -228,7 +233,7 @@ public class ThreadServer implements Runnable{
 			
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error en Server"); 
 		}
 		
 			

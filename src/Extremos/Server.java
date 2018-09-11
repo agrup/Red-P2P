@@ -22,6 +22,7 @@ public class Server implements Runnable{
 	String ip;
 	ArrayList<Query> consultas;
 	private int minResponse;
+
 	
 	
 	
@@ -71,7 +72,7 @@ public class Server implements Runnable{
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error al conectar con Master");
 		}
 		
 		
